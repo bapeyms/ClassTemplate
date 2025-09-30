@@ -7,6 +7,7 @@ class Array
 {
 	T* arr;
 	int size;
+	int trueSize;
 public:
 	Array();
 	Array(int size);
@@ -15,11 +16,15 @@ public:
 	Array& operator=(const Array& copy);
 	~Array();
 
-	int GetSize();
+	int GetSize() const;
+	int GetTrueSize() const;
+
 	int GetUpperBound();
+	bool IsEmpty();
+	void FreeExtra();
 
 	void Input();
-	void Print();
+	void Print() const;
 };
 
 template<class T>
@@ -44,6 +49,7 @@ inline Array<T>::Array(T a[], int s)
 	for (int i = 0; i < size; i++)
 	{
 		arr[i] = a[i];
+		trueSize++;
 	}
 }
 
@@ -85,23 +91,47 @@ inline Array<T>::~Array()
 }
 
 template<class T>
-inline int Array<T>::GetSize()
+inline int Array<T>::GetSize() const
 {
 	return size;
 }
 
 template<class T>
+inline int Array<T>::GetTrueSize() const
+{
+	return trueSize;
+}
+
+template<class T>
 inline int Array<T>::GetUpperBound()
 {
-	int index = 0;
-	for (int i = 0; i < size; i++)
+	return trueSize-1;
+}
+
+template<class T>
+inline bool Array<T>::IsEmpty()
+{
+	if (trueSize == 0)
 	{
-		if (arr[i] != 0)
-		{
-			index++;
-		}
+		return false;
 	}
-	return index-1;
+	return true;
+}
+
+template<class T>
+inline void Array<T>::FreeExtra()
+{
+	if (trueSize < size)
+	{
+		T* tempArr = new T[trueSize];
+		for (int i = 0; i < trueSize; i++)
+		{
+			tempArr[i] = arr[i];
+		}
+		delete[] arr;
+		arr = tempArr;
+		size = trueSize;
+	}
 }
 
 template<class T>
@@ -116,14 +146,13 @@ inline void Array<T>::Input()
 		cin >> size;
 	}
 	arr = new T[size];
-	bool answer = true;
-	int elements = 0;
+	int answer = 1;
 	cout << "Enter array's members" << endl;
 	for (int i = 0; i < size; i++)
 	{
-		cout << "Element #" i + 1 << ": ";
+		cout << "Element #" << i + 1 << ": ";
 		cin >> arr[i];
-		elements++;
+		trueSize++;
 		if (i < size - 1)
 		{
 			cout << "Wound you like to enter one more element? (1 - yes, 0 - no)" << endl;
@@ -139,9 +168,9 @@ inline void Array<T>::Input()
 }
 
 template<class T>
-inline void Array<T>::Print()
+inline void Array<T>::Print() const
 {
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < trueSize; i++)
 	{
 		cout << arr[i] << " ";
 	}
