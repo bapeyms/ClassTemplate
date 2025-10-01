@@ -11,7 +11,7 @@ class Array
 public:
 	Array();
 	Array(int size);
-	Array(T a[], int s);
+	Array(T a[], int s, int ts);
 	Array(const Array& copy);
 	Array& operator=(const Array& copy);
 	~Array();
@@ -22,29 +22,34 @@ public:
 	int GetUpperBound();
 	bool IsEmpty();
 	void FreeExtra();
+	void DeleteAll();
+	T& operator=(int index);
+	T& operator=(int index) const;
+	T GetAt(int index);
+	void SetAt(int index);
+	void Add();
+	Array operator+(const T& obj);
 
 	void Input();
 	void Print() const;
 };
 
 template<class T>
-inline Array<T>::Array()
-{
-	arr = nullptr;
-	size = 0;
-}
+inline Array<T>::Array() :arr(nullptr), size(0), trueSize(0) {}
 
 template<class T>
 inline Array<T>::Array(int size)
 {
 	this->size = size;
+	this->trueSize = 0;
 	arr = new T[size] {};
 }
 
 template<class T>
-inline Array<T>::Array(T a[], int s)
+inline Array<T>::Array(T a[], int s, int ts)
 {
 	size = s;
+	trueSize = ts;
 	arr = new T[size];
 	for (int i = 0; i < size; i++)
 	{
@@ -63,6 +68,7 @@ inline Array<T>::Array(const Array& copy)
 		arr[i] = copy.arr[i];
 	}
 }
+
 template<class T>
 inline Array<T>& Array<T>:: operator=(const Array& copy)
 {
@@ -88,6 +94,7 @@ inline Array<T>::~Array()
 {
 	delete[] arr;
 	size = 0;
+	trueSize = 0;
 }
 
 template<class T>
@@ -130,8 +137,77 @@ inline void Array<T>::FreeExtra()
 		}
 		delete[] arr;
 		arr = tempArr;
-		size = trueSize;
 	}
+}
+
+template<class T>
+inline void Array<T>::DeleteAll()
+{
+	if (arr != nullptr)
+	{
+		delete[] arr;
+	}
+	arr = nullptr;
+	size = 0;
+	trueSize = 0;
+}
+
+template<class T>
+inline T& Array<T>::operator=(int index)
+{
+	if (index < 0 && index >= trueSize)
+	{
+		throw out_of_range("Index out of range");
+	}
+	return arr[index];
+}
+template<class T>
+inline T& Array<T>::operator=(int index) const
+{
+	if (index < 0 && index >= trueSize)
+	{
+		throw out_of_range("Index out of range");
+	}
+	return arr[index];
+}
+
+template<class T>
+inline T Array<T>::GetAt(int index)
+{
+	return arr[index];
+}
+
+template<class T>
+inline void Array<T>::SetAt(int index)
+{
+	T element;
+	cout << "Enter a new value for the element " << GetAt(index) << ": ";
+	cin >> element;
+	arr[index] = element;
+}
+
+template<class T>
+inline void Array<T>::Add()
+{
+	int newSize = trueSize + 1;
+	T* newArr = new T[newSize];
+	T newElement;
+	cout << "Enter a new element: ";
+	cin >> newElement;
+	for (int i = 0; i < trueSize; i++)
+	{
+		newArr[i] = arr[i];
+	}
+	newArr[newSize - 1] = newElement;
+	delete[] arr;
+	arr = newArr;
+	trueSize = newSize;
+}
+
+template<class T>
+inline Array<T> Array<T>::operator+(const T& obj)
+{
+	int newSize;
 }
 
 template<class T>
